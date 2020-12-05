@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">Gameify</string>
+    <string name="gameify">GAMEIFY</string>
+    <string name="username">username:</string>
+    <string name="password">password:</string>
+    <string name="name">Name:</string>
+    <string name="surname">Surname:</string>
+    <string name="age">Age:</string>
+    <string name="e_mail">e-Mail:</string>
+    <string name="language">Language:</string>
+    <string name="log_out">Log Out</string>
+    <string name="welcome">Welcome,</string>
+    <string name="your_username">Your username:</string>
+    <string name="your_game_data">Your game data</string>
+    <string name="find_game_buddy">Find Game Buddy</string>
+    <string name="add_game_data">ADD GAME DATA</string>
+</resources>
