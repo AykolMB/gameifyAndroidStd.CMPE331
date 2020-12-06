@@ -24,23 +24,15 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
-    private TextView tv_gameify, tv_username, tv_user_password, tv_create_account;
+    TextView tv_gameify, tv_username, tv_user_password, tv_create_account;
     private EditText et_username, et_password;
     private CheckBox cb_robot;
-    private Button but_login_button;
-    final int CREATEACCOUNT = 7;
-
-    //public static ArrayList<String> user_list = new ArrayList<>();
-    //public static ArrayList<String> pass_list = new ArrayList<>();
-
-    private final String CREDENTIAL_SHARED_PREF = "our_shared_pref";
+    Button but_login_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         tv_gameify = (TextView) findViewById(R.id.tv_gameify);
         tv_username = (TextView) findViewById(R.id.tv_username);
@@ -51,13 +43,28 @@ public class MainActivity extends AppCompatActivity {
         cb_robot = (CheckBox) findViewById(R.id.cb_robot);
         but_login_button = (Button) findViewById(R.id.but_login_button);
 
+        // Silinecek
+        tv_username.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                loadData();
+                Intent intent =  new Intent(MainActivity.this, com.example.gameify.afterLoginMainPage.class);
+                userAccount userAdmin = new userAccount("Admin","Admin","Admin","Admin","Admin","admin","123","123");
+                userAccount.userAccountArrayList.add(userAdmin);
+                int index = userAccount.getUserAccountArrayList().indexOf(userAdmin);
+                intent.putExtra("index",index);
+                saveData();
+                startActivity(intent);
+
+            }
+        });
+
         tv_gameify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 clearData();
             }
         });
-
 
         tv_create_account.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -67,69 +74,39 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
         but_login_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadData();
-
+                int index = 0;
                 String username_from_et = et_username.getText().toString();
                 String password_from_et = et_password.getText().toString();
 
-                brkfor:
-                for (;;){
-
-                    if (userAccount.userAccountArrayList.isEmpty()){
-                        Toast.makeText(MainActivity.this, "Data not found!!", Toast.LENGTH_SHORT).show();
-                        break brkfor;
-                    }
-
-                    int index = 0;
-
-                    if (index == 0 && userAccount.getUserAccountArrayList().get(index) == null){
-                        Toast.makeText(MainActivity.this, "No account for entered username!!",Toast.LENGTH_SHORT).show();
-                        break brkfor;
-                    }
-
-                    brkwhile:
-                    while(index < userAccount.userAccountArrayList.size()){
-                        if (index == userAccount.userAccountArrayList.size()){
-                            index = 0;
-                            Toast.makeText(MainActivity.this, "There is no account for entered username", Toast.LENGTH_SHORT).show();
-                            break brkfor;
-                        }
-                        else if (username_from_et.equalsIgnoreCase(userAccount.userAccountArrayList.get(index).getUsername())){
-                            index = index;
-                            break brkwhile;
-                        }else{
-                            index++;
-                        }
-
-                    }
-
-                    String list_username = userAccount.getUserAccountArrayList().get(index).getUsername();
-                    String list_password = userAccount.getUserAccountArrayList().get(index).getPassword();
-
-                    if (list_username != null && username_from_et != null && list_username.equalsIgnoreCase(username_from_et)){
-                        if (list_password != null && password_from_et != null && list_password.equalsIgnoreCase(password_from_et)){
-                            if (cb_robot.isChecked()){
-                                Toast.makeText(MainActivity.this,"Login Successful",Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(MainActivity.this, com.example.gameify.afterLoginMainPage.class);
-                                intent.putExtra("index" , index);
-                                startActivity(intent);
-                                break brkfor;}
-                            else{
-                                Toast.makeText(MainActivity.this, "Please verify, you're human.",Toast.LENGTH_SHORT).show();
-                                break brkfor;
+                if (userAccount.getUserAccountArrayList().size() == 0){
+                    Toast.makeText(MainActivity.this, "There is no entered data!!", Toast.LENGTH_SHORT).show();
+                }else {
+                    for (int i = 0; i < userAccount.getUserAccountArrayList().size(); i++) {
+                        if (username_from_et.equalsIgnoreCase(userAccount.getUserAccountArrayList().get(i).getUsername())) {
+                            if (password_from_et.equalsIgnoreCase(userAccount.getUserAccountArrayList().get(i).getPassword())) {
+                                index = i;
+                                String usernameList = userAccount.getUserAccountArrayList().get(index).getUsername();
+                                String passwordList = userAccount.getUserAccountArrayList().get(index).getPassword();
+                                if (cb_robot.isChecked()) {
+                                    et_username.setText("");
+                                    et_password.setText("");
+                                    Toast.makeText(MainActivity.this, "Login Succesful!!", Toast.LENGTH_SHORT).show();
+                                    Intent intent = new Intent(MainActivity.this, com.example.gameify.afterLoginMainPage.class);
+                                    intent.putExtra("index", index);
+                                    startActivity(intent);
+                                } else {
+                                    Toast.makeText(MainActivity.this, "Please verify you're human!!", Toast.LENGTH_SHORT).show();
+                                }
+                            } else {
+                                Toast.makeText(MainActivity.this, "Entered password is not matched username!!", Toast.LENGTH_SHORT).show();
                             }
-                        }else {
-                            Toast.makeText(MainActivity.this, "Login Failed!!",Toast.LENGTH_SHORT).show();
-                            break brkfor;
+                        } else {
+                            Toast.makeText(MainActivity.this, "Entered username is not matched any data!!", Toast.LENGTH_SHORT).show();
                         }
-                    }else{
-                        Toast.makeText(MainActivity.this, "Login Failed!!",Toast.LENGTH_SHORT).show();
-                        break brkfor;
                     }
                 }
             }

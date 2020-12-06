@@ -2,6 +2,7 @@ package com.example.gameify;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -21,16 +22,17 @@ import javax.crypto.Mac;
 public class afterLoginMainPage extends AppCompatActivity {
 
 
-    private Button but_find, but_gamedata_button_afterLogPage;
-    private TextView tv_logout, tv_welcome, tv_username, tv_gamedata;
-    private TextView tv_refreshgamedata;
+    Button but_find, but_gamedata_button_afterLogPage;
+    TextView tv_logout, tv_welcome, tv_username, tv_gamedata;
+    TextView tv_refreshgamedata;
 
-    private static String name_bf;
-    private static String username_bf;
+    public  static String name_bf;
+    String username_bf;
     public static String total_gamedata = "Your game data:\n";
 
     private final String CREDENTIAL_SHARED_PREF = "our_shared_pref";
 
+    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,17 +56,13 @@ public class afterLoginMainPage extends AppCompatActivity {
         tv_username.setText("Your username: "+username_bf);
         tv_gamedata.setText(total_gamedata);
 
-
-
         tv_logout.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 Intent intent = new Intent(afterLoginMainPage.this, MainActivity.class);
                 Toast.makeText(afterLoginMainPage.this, "Log out Successful", Toast.LENGTH_SHORT).show();
                 afterLoginMainPage.this.finish();
                 startActivity(intent);
-
             }
         });
 

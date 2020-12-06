@@ -25,12 +25,9 @@ public class createAccountWindow extends AppCompatActivity {
     private EditText et_name_accPage, et_surname_accPage, et_age_accPage;
     private EditText et_email_accPage, et_lang_accPage;
     private EditText et_username_accPage, et_password_accPage, et_re_password_accPage;
-    private Button but_create_button_accPage;
+    Button but_create_button_accPage;
 
     userAccount def_user = new userAccount();
-
-    public static String pbname;
-    public static String pbusername;
 
     private final String CREDENTIAL_SHARED_PREF = "our_shared_pref";
 
@@ -53,34 +50,36 @@ public class createAccountWindow extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                String name = et_name_accPage.getText().toString();
-                String surname = et_surname_accPage.getText().toString();
-                String age = et_age_accPage.getText().toString();
-                String email = et_email_accPage.getText().toString();
-                String lang = et_lang_accPage.getText().toString();
-                String username = et_username_accPage.getText().toString();
-                String password = et_password_accPage.getText().toString();
-                String re_password = et_re_password_accPage.getText().toString();
+                String name = et_name_accPage.getText().toString().trim();
+                String surname = et_surname_accPage.getText().toString().trim();
+                String age = et_age_accPage.getText().toString().trim();
+                String email = et_email_accPage.getText().toString().trim();
+                String lang = et_lang_accPage.getText().toString().trim();
+                String username = et_username_accPage.getText().toString().trim();
+                String password = et_password_accPage.getText().toString().trim();
+                String re_password = et_re_password_accPage.getText().toString().trim();
 
+                boolean status = check(name,surname,age,email,lang,username,password,re_password);
 
-                //pbname = et_name_accPage.getText().toString() + " " + et_surname_accPage.getText().toString();
-                //pbusername = et_username_accPage.getText().toString();
-
-                if (password != null && re_password != null && password.equalsIgnoreCase(re_password)){
-
-                    userAccount new_user = new userAccount(name, surname, age, email, lang, username, password, re_password);
-                    userAccount.userAccountArrayList.add(new_user);
-                    saveData();
-                    createAccountWindow.this.finish();
-                }else{
-                    Toast.makeText(createAccountWindow.this, "Please check your passwords..", Toast.LENGTH_SHORT).show();
-                    et_password_accPage.setText("");
-                    et_re_password_accPage.setText("");
+                if (status){
+                    if (password.equalsIgnoreCase(re_password)){
+                        userAccount new_user = new userAccount(name, surname, age, email, lang, username, password, re_password);
+                        userAccount.userAccountArrayList.add(new_user);
+                        saveData();
+                        createAccountWindow.this.finish();
+                    }else{
+                        Toast.makeText(createAccountWindow.this, "Please check your passwords..", Toast.LENGTH_SHORT).show();
+                        et_password_accPage.setText("");
+                        et_re_password_accPage.setText("");
+                    }
+                }else {
+                    Toast.makeText(createAccountWindow.this, "Please fill all information!!", Toast.LENGTH_SHORT).show();
                 }
-
             }
         });
-
+    }
+    private boolean check(String name, String surname, String age, String email, String lang, String username, String password, String re_password) {
+        return !name.isEmpty() && !surname.isEmpty() && !age.isEmpty() && !email.isEmpty() && !lang.isEmpty() && !username.isEmpty() && !password.isEmpty() && !re_password.isEmpty();
     }
 
     private void saveData(){

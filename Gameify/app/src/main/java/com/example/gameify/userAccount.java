@@ -31,7 +31,6 @@ public class userAccount {
         this.password = password;
         this.re_password = re_password;
 
-        //userAccountArrayList.add(new userAccount(this.name, this.surname, this.age, this.email, this.language, this.username, this.password, this.re_password));
     }
 
     public static ArrayList<userAccount> getUserAccountArrayList() {

@@ -30,7 +30,7 @@
         android:layout_marginTop="40dp"
         android:layout_marginEnd="280dp"
         android:layout_marginRight="280dp"
-        android:clickable="false"
+        android:clickable="true"
         android:gravity="center"
         android:text="@string/username"
         android:textSize="16sp"
