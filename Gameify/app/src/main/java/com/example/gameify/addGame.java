@@ -60,22 +60,13 @@ public class addGame extends AppCompatActivity {
         sp_GTA.setEnabled(false);
 
         String username = getIntent().getStringExtra("usernameToAddGame");
-        /*
-        *firstcheck --- refresh data için kullanılabilir --- acelesi yok
-        */
 
-        //firstCheck(username);
+        int index = firstCheckUsername(username);
+
         adapter(sp_CS, csgolist);
         adapter(sp_LOL, lollist);
         adapter(sp_R6, r6list);
         adapter(sp_GTA, gtalist);
-
-        but_update.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-            }
-        });
 
         but_save.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -84,49 +75,56 @@ public class addGame extends AppCompatActivity {
                 boolean status = true;
                 if (cb_CS.isChecked()) {
                     if (sp_CS.getSelectedItemPosition() != 0) {
-                        gameDataMap.put(game_csgo.getGameName(), sp_CS.getSelectedItem().toString());
+                        String getRankCSGO = sp_CS.getSelectedItem().toString();
+                        gameData.putItemArrayList("CS-GO", index , getRankCSGO);
                         status = true;
                     } else {
                         Toast.makeText(addGame.this, "Please choose your rank/level", Toast.LENGTH_SHORT).show();
                         status = false;
                     }
+                }else{
+                    gameData.putItemArrayList("CS-GO", index , "");
                 }
                 if (cb_LOL.isChecked()) {
                     if (sp_LOL.getSelectedItemPosition() != 0) {
-                        gameDataMap.put(game_lol.getGameName(), sp_LOL.getSelectedItem().toString());
+                        String getRankLOL = sp_LOL.getSelectedItem().toString();
+                        gameData.putItemArrayList("LOL", index , getRankLOL);
                         status = true;
                     } else {
                         Toast.makeText(addGame.this, "Please choose your rank/level", Toast.LENGTH_SHORT).show();
                         status = false;
                     }
+                }else {
+                    gameData.putItemArrayList("LOL", index , "");
                 }
                 if (cb_R6.isChecked()) {
                     if (sp_R6.getSelectedItemPosition() != 0) {
-                        gameDataMap.put(game_r6.getGameName(), sp_R6.getSelectedItem().toString());
+                        String getRankR6 = sp_R6.getSelectedItem().toString();
+                        gameData.putItemArrayList("R6", index , getRankR6);
                         status = true;
                     } else {
                         Toast.makeText(addGame.this, "Please choose your rank/level", Toast.LENGTH_SHORT).show();
                         status = false;
                     }
+                }else{
+                    gameData.putItemArrayList("R6", index , "");
                 }
                 if (cb_GTA.isChecked()) {
                     if (sp_GTA.getSelectedItemPosition() != 0) {
-                        gameDataMap.put(game_gta.getGameName(), sp_GTA.getSelectedItem().toString());
+                        String getRankGTA = sp_GTA.getSelectedItem().toString();
+                        gameData.putItemArrayList("GTA", index , getRankGTA);
                         status = true;
                     } else {
                         Toast.makeText(addGame.this, "Please choose your rank/level", Toast.LENGTH_SHORT).show();
                         status = false;
                     }
+                }else{
+                    gameData.putItemArrayList("GTA", index , "");
                 }
-                if (status) {
-                    Map<String, Map> temp = new HashMap<>();
-                    temp.put(username, gameDataMap);
-                    gameData.setUserGameDataMap(temp);
-                    addGame.this.finish();
-                } else {
-                    Toast.makeText(addGame.this, "Please control your selections..", Toast.LENGTH_SHORT).show();
-                }
+                addGame.this.finish();
+
             }
+
         });
         // Checkbox and spinner
         {
@@ -189,25 +187,22 @@ public class addGame extends AppCompatActivity {
         }
     }
 
-    private void firstCheck(String username) {
-        ArrayList<Map> tempArray = gameData.getArrayList();
-        for (int i = 0; i < tempArray.size(); i++) {
-            Map<String, Map> tempMap = tempArray.get(i);
-            for (Map.Entry m : tempMap.entrySet())
-                if (m.getKey().toString().equalsIgnoreCase(username)) {
-                    Map<String, String> tempMapInner = (Map<String, String>) m.getValue();
-                    for (Map.Entry mInner : tempMapInner.entrySet()) {
-                        String gameName = mInner.getKey().toString();
-                        String gameRank = mInner.getValue().toString();
-
-                    }
-                }
+    private int firstCheckUsername(String username) {
+        int index = 0;
+        ArrayList<String> temp = gameData.getUsernameArrayList();
+        for (int i = 0 ; i<temp.size() ; i++){
+            if (temp.get(i).equalsIgnoreCase(username)){
+                index = i;
+            }
         }
+        return index;
     }
+
 
     private void adapter(Spinner sp, String[] templist) {
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, templist);
         aa.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sp.setAdapter(aa);
     }
+
 }

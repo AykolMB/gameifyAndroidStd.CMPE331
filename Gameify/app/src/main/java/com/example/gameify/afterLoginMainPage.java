@@ -6,6 +6,7 @@ import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.view.Display;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -47,9 +48,14 @@ public class afterLoginMainPage extends AppCompatActivity {
         tv_refreshgamedata = (TextView) findViewById(R.id.tv_refreshgamedata);
 
         loadData();
+
         int index = getIntent().getIntExtra("index", 0);
         name_bf = userAccount.getUserAccountArrayList().get(index).getName() + " " + userAccount.getUserAccountArrayList().get(index).getSurname();
         username_bf = userAccount.getUserAccountArrayList().get(index).getUsername();
+
+        if (!gameData.getUsernameArrayList().contains(username_bf)){
+            gameData.putUserArrayList(username_bf);
+        }
 
         tv_welcome.setText("Welcome, " + name_bf + "!!");
         tv_username.setText("Your username: "+username_bf);
@@ -77,31 +83,55 @@ public class afterLoginMainPage extends AppCompatActivity {
         tv_refreshgamedata.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadData();
 
-                String out = "Games:\n";
-                ArrayList<Map> tempArray = gameData.getArrayList();
-                int size = tempArray.size();
-                if (!(size == 0)){
-                for (int i = 0 ; i<tempArray.size() ; i++){
-                    Map<String , Map> tempMap = tempArray.get(i);
-                    for (Map.Entry m : tempMap.entrySet()){
-                        if (m.getKey().toString().equalsIgnoreCase(username_bf)){
-                            Map<String , String > tempMapInner = (Map<String, String>) m.getValue();
-                            for (Map.Entry mInner : tempMapInner.entrySet()){
-                                String gameName = mInner.getKey().toString();
-                                String gameRank = mInner.getValue().toString();
-                                out = out + "\n" + gameName + "-:-" + gameRank;
-                            }
-                        }
-                    }
-                }
-                }else {
-                    Toast.makeText(afterLoginMainPage.this,"No data",Toast.LENGTH_SHORT).show();
-                }
+                String out = "";
+                int index = firstCheckUsername(username_bf);
+                String csgoRank = getRank(0,index);
+                String lolRank = getRank(1,index);
+                String r6Rank = getRank(2,index);
+                String gtaRank = getRank(3,index);
+                out = outputSet(csgoRank, lolRank, r6Rank, gtaRank);
                 tv_gamedata.setText(out);
+
             }
         });
+
+}
+
+    private String getRank(int i, int index) {
+        String[] temp;
+        String returnStatement;
+        if (i == 0){
+            temp = gameData.getRankCSGO();
+            returnStatement = temp[index];
+        }else if (i == 1){
+            temp = gameData.getRankLOL();
+            returnStatement = temp[index];
+        }else if (i == 2){
+            temp = gameData.getRankR6();
+            returnStatement = temp[index];
+        }else{
+            temp = gameData.getRankGTA();
+            returnStatement = temp[index];
+        }
+        return  returnStatement;
+    }
+
+    private String outputSet(String csgoRank, String lolRank, String r6Rank, String gtaRank) {
+            String output = "Your game data:\n";
+            if (!csgoRank.equalsIgnoreCase("")){
+                output = output + "CS-GO" + " -:- " + csgoRank + "\n";
+            }
+            if (!lolRank.equalsIgnoreCase("")){
+                output = output + "LOL" + " -:- " + lolRank + "\n";
+            }
+            if (!r6Rank.equalsIgnoreCase("")){
+                output = output + "R6" + " -:- " + r6Rank + "\n";
+            }
+            if (!gtaRank.equalsIgnoreCase("")){
+                output = output + "GTA" + " -:- " + gtaRank + "\n";
+            }
+            return output;
     }
 
     private void loadData(){
@@ -115,4 +145,16 @@ public class afterLoginMainPage extends AppCompatActivity {
             new userAccount();  // will create arraylist
         }
     }
+
+    private int firstCheckUsername(String username) {
+        int index = 0;
+        ArrayList<String> temp = gameData.getUsernameArrayList();
+        for (int i = 0 ; i<temp.size() ; i++){
+            if (temp.get(i).equalsIgnoreCase(username)){
+                index = i;
+            }
+        }
+        return index;
+    }
+    
 }
