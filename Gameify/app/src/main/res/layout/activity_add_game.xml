@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".addGame">
+
+    <CheckBox
+        android:id="@+id/cb_CSGO"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|start"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="CS-GO" />
+
+    <Spinner
+        android:id="@+id/sp_CSGO"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|end"
+        android:layout_marginTop="-50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:clickable="false" />
+
+    <CheckBox
+        android:id="@+id/cb_LOL"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|start"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="LOL" />
+
+    <Spinner
+        android:id="@+id/sp_LOL"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|end"
+        android:layout_marginTop="-50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:clickable="false" />
+
+    <CheckBox
+        android:id="@+id/cb_R6SIEGE"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|start"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="R6" />
+
+    <Spinner
+        android:id="@+id/sp_R6"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|end"
+        android:layout_marginTop="-50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:clickable="false" />
+
+    <CheckBox
+        android:id="@+id/cb_GTA"
+        android:layout_width="100dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|start"
+        android:layout_marginStart="10dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="10dp"
+        android:text="GTA 5" />
+
+    <Spinner
+        android:id="@+id/sp_GTA"
+        android:layout_width="280dp"
+        android:layout_height="50dp"
+        android:layout_gravity="center|end"
+        android:layout_marginTop="-50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginRight="10dp"
+        android:clickable="false" />
+
+    <Button
+        android:id="@+id/but_save"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:text="Save" />
+
+    <Button
+        android:id="@+id/but_update"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="50dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="50dp"
+        android:layout_marginRight="50dp"
+        android:text="UPDATE" />
+</LinearLayout>

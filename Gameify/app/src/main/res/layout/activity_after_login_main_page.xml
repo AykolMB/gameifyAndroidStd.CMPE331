@@ -13,9 +13,11 @@
         android:layout_height="30dp"
         android:layout_gravity="right|top"
         android:clickable="true"
+        android:focusable="true"
         android:gravity="center"
         android:text="@string/log_out"
-        android:focusable="true" />
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_welcome_afterLogPage"
@@ -23,7 +25,9 @@
         android:layout_height="40dp"
         android:layout_marginTop="10dp"
         android:gravity="left|center_vertical"
-        android:text="@string/welcome" />
+        android:text="@string/welcome"
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_username_afterLogPage"
@@ -31,7 +35,9 @@
         android:layout_height="40dp"
         android:layout_marginTop="10dp"
         android:gravity="center|center_vertical"
-        android:text="@string/your_username" />
+        android:text="@string/your_username"
+        android:textColor="#000000"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_refreshgamedata"
@@ -40,13 +46,19 @@
         android:layout_gravity="right"
         android:clickable="true"
         android:gravity="center"
-        android:text="Refresh Game Data" />
+        android:text="Refresh Game Data"
+        android:textColor="#000000"
+        android:textSize="14sp"
+        android:textStyle="bold" />
 
     <TextView
         android:id="@+id/tv_game_data_afterLogPage"
         android:layout_width="match_parent"
         android:layout_height="315dp"
-        android:text="@string/your_game_data" />
+        android:text="@string/your_game_data"
+        android:textColor="#000000"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <Button
         android:id="@+id/but_gamedata_button_afterLogPage"
@@ -54,7 +66,7 @@
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:gravity="center"
-        android:text="ADD GAME DATA" />
+        android:text="GAME DATA" />
 
     <Button
         android:id="@+id/but_find_button_afterLogPage"

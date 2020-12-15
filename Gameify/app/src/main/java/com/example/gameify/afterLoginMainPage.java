@@ -12,10 +12,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Map;
 
 import javax.crypto.Mac;
 
@@ -26,11 +28,9 @@ public class afterLoginMainPage extends AppCompatActivity {
     TextView tv_logout, tv_welcome, tv_username, tv_gamedata;
     TextView tv_refreshgamedata;
 
-    public  static String name_bf;
-    String username_bf;
+    private static String name_bf;
+    private static String username_bf;
     public static String total_gamedata = "Your game data:\n";
-
-    private final String CREDENTIAL_SHARED_PREF = "our_shared_pref";
 
     @SuppressLint("SetTextI18n")
     @Override
@@ -47,7 +47,6 @@ public class afterLoginMainPage extends AppCompatActivity {
         tv_refreshgamedata = (TextView) findViewById(R.id.tv_refreshgamedata);
 
         loadData();
-
         int index = getIntent().getIntExtra("index", 0);
         name_bf = userAccount.getUserAccountArrayList().get(index).getName() + " " + userAccount.getUserAccountArrayList().get(index).getSurname();
         username_bf = userAccount.getUserAccountArrayList().get(index).getUsername();
@@ -69,7 +68,8 @@ public class afterLoginMainPage extends AppCompatActivity {
         but_gamedata_button_afterLogPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(afterLoginMainPage.this , addGameData.class);
+                Intent intent = new Intent(afterLoginMainPage.this , addGame.class);
+                intent.putExtra("usernameToAddGame", username_bf);
                 startActivity(intent);
             }
         });
@@ -78,20 +78,28 @@ public class afterLoginMainPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadData();
-                int index = getIntent().getIntExtra("index", 0);
-                name_bf = userAccount.getUserAccountArrayList().get(index).getName() + " " + userAccount.getUserAccountArrayList().get(index).getSurname();
-                username_bf = userAccount.getUserAccountArrayList().get(index).getUsername();
-                tv_welcome.setText("Welcome, " + name_bf + "!!");
-                tv_username.setText("Your username: "+username_bf);
-                String oldData = total_gamedata;
-                Intent intent =getIntent();
-                String data = intent.getStringExtra("gamedata");
-                if(data != null){
-                    total_gamedata =oldData + "\n" + data;
-                    tv_gamedata.setText(total_gamedata); }
-                else{
-                    Toast.makeText(afterLoginMainPage.this, "There is no new data!!", Toast.LENGTH_SHORT).show();
+
+                String out = "Games:\n";
+                ArrayList<Map> tempArray = gameData.getArrayList();
+                int size = tempArray.size();
+                if (!(size == 0)){
+                for (int i = 0 ; i<tempArray.size() ; i++){
+                    Map<String , Map> tempMap = tempArray.get(i);
+                    for (Map.Entry m : tempMap.entrySet()){
+                        if (m.getKey().toString().equalsIgnoreCase(username_bf)){
+                            Map<String , String > tempMapInner = (Map<String, String>) m.getValue();
+                            for (Map.Entry mInner : tempMapInner.entrySet()){
+                                String gameName = mInner.getKey().toString();
+                                String gameRank = mInner.getValue().toString();
+                                out = out + "\n" + gameName + "-:-" + gameRank;
+                            }
+                        }
+                    }
                 }
+                }else {
+                    Toast.makeText(afterLoginMainPage.this,"No data",Toast.LENGTH_SHORT).show();
+                }
+                tv_gamedata.setText(out);
             }
         });
     }

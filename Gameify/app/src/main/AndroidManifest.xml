@@ -9,7 +9,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Gameify">
-        <activity android:name=".addGameData"></activity>
+        <activity android:name=".addGame"></activity>
         <activity android:name=".afterLoginMainPage" />
         <activity android:name=".MainActivity">
             <intent-filter>

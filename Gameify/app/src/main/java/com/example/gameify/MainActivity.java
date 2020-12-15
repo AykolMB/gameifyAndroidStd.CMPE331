@@ -49,7 +49,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 loadData();
                 Intent intent =  new Intent(MainActivity.this, com.example.gameify.afterLoginMainPage.class);
-                userAccount userAdmin = new userAccount("Admin","Admin","Admin","Admin","Admin","admin","123","123");
+                userAccount userAdmin = new userAccount("Admin","Admin","Admin","Admin","admin","123","123");
                 userAccount.userAccountArrayList.add(userAdmin);
                 int index = userAccount.getUserAccountArrayList().indexOf(userAdmin);
                 intent.putExtra("index",index);
@@ -144,4 +144,6 @@ public class MainActivity extends AppCompatActivity {
             new userAccount();  // will create arraylist
         }
     }
+
+
 }
