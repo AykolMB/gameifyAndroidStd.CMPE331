@@ -39,7 +39,7 @@ public class afterLoginMainPage extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_login_main_page);
 
-        but_find = (Button) findViewById(R.id.but_login_button);
+        but_find = (Button) findViewById(R.id.but_find_button_afterLogPage);
         but_gamedata_button_afterLogPage = (Button) findViewById(R.id.but_gamedata_button_afterLogPage);
         tv_logout = (TextView) findViewById(R.id.tv_logout_afterLogPage);
         tv_welcome = (TextView) findViewById(R.id.tv_welcome_afterLogPage);
@@ -71,6 +71,14 @@ public class afterLoginMainPage extends AppCompatActivity {
             }
         });
 
+        but_find.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(afterLoginMainPage.this, com.example.gameify.findBuddy.class);
+                intent.putExtra("usernameToGameRank", username_bf);
+                startActivity(intent);
+            }
+        });
         but_gamedata_button_afterLogPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -83,7 +91,8 @@ public class afterLoginMainPage extends AppCompatActivity {
         tv_refreshgamedata.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                loadData();
+                loadGameData();
                 String out = "";
                 int index = firstCheckUsername(username_bf);
                 String csgoRank = getRank(0,index);
@@ -118,20 +127,24 @@ public class afterLoginMainPage extends AppCompatActivity {
     }
 
     private String outputSet(String csgoRank, String lolRank, String r6Rank, String gtaRank) {
-            String output = "Your game data:\n";
-            if (!csgoRank.equalsIgnoreCase("")){
-                output = output + "CS-GO" + " -:- " + csgoRank + "\n";
+        String output = "Your game data:\n";
+        if (csgoRank == null && lolRank == null && r6Rank == null && gtaRank == null) {
+            output = output;
+        } else {
+            if (!csgoRank.equalsIgnoreCase("") || csgoRank != null) {
+                output = output + "CS-GO\t\t Rank: " + csgoRank + "\n";
             }
-            if (!lolRank.equalsIgnoreCase("")){
-                output = output + "LOL" + " -:- " + lolRank + "\n";
+            if (!lolRank.equalsIgnoreCase("") || lolRank != null) {
+                output = output + "LOL\t\t\t\t\t Rank: " + lolRank + "\n";
             }
-            if (!r6Rank.equalsIgnoreCase("")){
-                output = output + "R6" + " -:- " + r6Rank + "\n";
+            if (!r6Rank.equalsIgnoreCase("") || r6Rank != null) {
+                output = output + "R6\t\t\t\t\t\t\t Rank: " + r6Rank + "\n";
             }
-            if (!gtaRank.equalsIgnoreCase("")){
-                output = output + "GTA" + " -:- " + gtaRank + "\n";
+            if (!gtaRank.equalsIgnoreCase("") || gtaRank != null) {
+                output = output + "GTA\t\t\t\t\t Rank: " + gtaRank + "\n";
             }
-            return output;
+        }
+        return output;
     }
 
     private void loadData(){
@@ -155,6 +168,47 @@ public class afterLoginMainPage extends AppCompatActivity {
             }
         }
         return index;
+    }
+
+    private void saveGameData() {
+        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharepref.edit();
+        Gson gson = new Gson();
+        String jsonUsername = gson.toJson(gameData.getUsernameArrayList());
+        String jsonGameList = gson.toJson(gameData.getGameList());
+        String jsonCSGO = gson.toJson(gameData.getRankCSGO());
+        String jsonLOL = gson.toJson(gameData.getRankLOL());
+        String jsonR6 = gson.toJson(gameData.getRankR6());
+        String jsonGTA = gson.toJson(gameData.getRankGTA());
+        editor.putString("usernameArrayList", jsonUsername);
+        editor.putString("gameList", jsonGameList);
+        editor.putString("csgoRank", jsonCSGO);
+        editor.putString("lolRank", jsonLOL);
+        editor.putString("r6Rank", jsonR6);
+        editor.putString("gtaRank", jsonGTA);
+        editor.apply();
+
+    }
+
+    private void loadGameData() {
+        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
+        Gson gson = new Gson();
+        String jsonUsername = sharepref.getString("usernameArrayList", null);
+        String jsonGameList = sharepref.getString("gameList", null);
+        String jsonCSGO = sharepref.getString("csgoRank", null);
+        String jsonLOL = sharepref.getString("lolRank", null);
+        String jsonR6 = sharepref.getString("r6Rank", null);
+        String jsonGTA = sharepref.getString("gtaRank", null);
+        Type typeArrayList = new TypeToken<ArrayList<String>>() {
+        }.getType();
+        Type typeArray = new TypeToken<String[]>() {
+        }.getType();
+        gameData.setUsernameArrayList(gson.fromJson(jsonUsername, typeArrayList));
+        gameData.setGameList(gson.fromJson(jsonGameList, typeArray));
+        gameData.setRankCSGO(gson.fromJson(jsonCSGO, typeArray));
+        gameData.setRankLOL(gson.fromJson(jsonLOL, typeArray));
+        gameData.setRankR6(gson.fromJson(jsonR6, typeArray));
+        gameData.setRankGTA(gson.fromJson(jsonGTA, typeArray));
     }
     
 }

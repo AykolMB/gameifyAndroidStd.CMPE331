@@ -81,4 +81,11 @@ public class gameData {
     public static void setRankGTA(String[] rankGTA) {
         gameData.rankGTA = rankGTA;
     }
+
+    public static void clearRankData(int index) {
+        rankCSGO[index] = "";
+        rankLOL[index] = "";
+        rankR6[index] = "";
+        rankGTA[index] = "";
+    }
 }
