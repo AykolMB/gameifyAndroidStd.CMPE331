@@ -19,6 +19,7 @@ import com.google.gson.reflect.TypeToken;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.TreeMap;
 
 import javax.crypto.Mac;
 
@@ -31,6 +32,7 @@ public class afterLoginMainPage extends AppCompatActivity {
 
     private static String name_bf;
     private static String username_bf;
+    private static String age_bf;
     public static String total_gamedata = "Your game data:\n";
 
     @SuppressLint("SetTextI18n")
@@ -38,7 +40,6 @@ public class afterLoginMainPage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_after_login_main_page);
-
         but_find = (Button) findViewById(R.id.but_find_button_afterLogPage);
         but_gamedata_button_afterLogPage = (Button) findViewById(R.id.but_gamedata_button_afterLogPage);
         tv_logout = (TextView) findViewById(R.id.tv_logout_afterLogPage);
@@ -52,6 +53,7 @@ public class afterLoginMainPage extends AppCompatActivity {
         int index = getIntent().getIntExtra("index", 0);
         name_bf = userAccount.getUserAccountArrayList().get(index).getName() + " " + userAccount.getUserAccountArrayList().get(index).getSurname();
         username_bf = userAccount.getUserAccountArrayList().get(index).getUsername();
+        age_bf = userAccount.getUserAccountArrayList().get(index).getAge();
 
         if (!gameData.getUsernameArrayList().contains(username_bf)){
             gameData.putUserArrayList(username_bf);
@@ -76,14 +78,17 @@ public class afterLoginMainPage extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(afterLoginMainPage.this, com.example.gameify.findBuddy.class);
                 intent.putExtra("usernameToGameRank", username_bf);
+                intent.putExtra("ageToGameRank", age_bf);
                 startActivity(intent);
             }
         });
         but_gamedata_button_afterLogPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadGameData();
                 Intent intent = new Intent(afterLoginMainPage.this , addGame.class);
                 intent.putExtra("usernameToAddGame", username_bf);
+                intent.putExtra("ageToAddGame", age_bf);
                 startActivity(intent);
             }
         });
@@ -94,11 +99,11 @@ public class afterLoginMainPage extends AppCompatActivity {
                 loadData();
                 loadGameData();
                 String out = "";
-                int index = firstCheckUsername(username_bf);
-                String csgoRank = getRank(0,index);
-                String lolRank = getRank(1,index);
-                String r6Rank = getRank(2,index);
-                String gtaRank = getRank(3,index);
+                int index = allDataUsernameChecker(username_bf);
+                String csgoRank = gameData.getAllUserData().get(index).getrCsgo();
+                String lolRank = gameData.getAllUserData().get(index).getrLol();
+                String r6Rank = gameData.getAllUserData().get(index).getrR6();
+                String gtaRank = gameData.getAllUserData().get(index).getrGta();
                 out = outputSet(csgoRank, lolRank, r6Rank, gtaRank);
                 tv_gamedata.setText(out);
 
@@ -106,25 +111,6 @@ public class afterLoginMainPage extends AppCompatActivity {
         });
 
 }
-
-    private String getRank(int i, int index) {
-        String[] temp;
-        String returnStatement;
-        if (i == 0){
-            temp = gameData.getRankCSGO();
-            returnStatement = temp[index];
-        }else if (i == 1){
-            temp = gameData.getRankLOL();
-            returnStatement = temp[index];
-        }else if (i == 2){
-            temp = gameData.getRankR6();
-            returnStatement = temp[index];
-        }else{
-            temp = gameData.getRankGTA();
-            returnStatement = temp[index];
-        }
-        return  returnStatement;
-    }
 
     private String outputSet(String csgoRank, String lolRank, String r6Rank, String gtaRank) {
         String output = "Your game data:\n";
@@ -159,35 +145,18 @@ public class afterLoginMainPage extends AppCompatActivity {
         }
     }
 
-    private int firstCheckUsername(String username) {
-        int index = 0;
-        ArrayList<String> temp = gameData.getUsernameArrayList();
-        for (int i = 0 ; i<temp.size() ; i++){
-            if (temp.get(i).equalsIgnoreCase(username)){
-                index = i;
+    private int allDataUsernameChecker(String username) {
+        int a = 0;
+        ArrayList<gameData> temp = gameData.getAllUserData();
+        if (temp != null) {
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getUsername().equalsIgnoreCase(username)) {
+                    a = i;
+                    break;
+                }
             }
         }
-        return index;
-    }
-
-    private void saveGameData() {
-        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharepref.edit();
-        Gson gson = new Gson();
-        String jsonUsername = gson.toJson(gameData.getUsernameArrayList());
-        String jsonGameList = gson.toJson(gameData.getGameList());
-        String jsonCSGO = gson.toJson(gameData.getRankCSGO());
-        String jsonLOL = gson.toJson(gameData.getRankLOL());
-        String jsonR6 = gson.toJson(gameData.getRankR6());
-        String jsonGTA = gson.toJson(gameData.getRankGTA());
-        editor.putString("usernameArrayList", jsonUsername);
-        editor.putString("gameList", jsonGameList);
-        editor.putString("csgoRank", jsonCSGO);
-        editor.putString("lolRank", jsonLOL);
-        editor.putString("r6Rank", jsonR6);
-        editor.putString("gtaRank", jsonGTA);
-        editor.apply();
-
+        return a;
     }
 
     private void loadGameData() {
@@ -199,6 +168,10 @@ public class afterLoginMainPage extends AppCompatActivity {
         String jsonLOL = sharepref.getString("lolRank", null);
         String jsonR6 = sharepref.getString("r6Rank", null);
         String jsonGTA = sharepref.getString("gtaRank", null);
+        String jsonAllUserData = sharepref.getString("jsonAllUserData", null);
+        Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
+        }.getType();
+        /*
         Type typeArrayList = new TypeToken<ArrayList<String>>() {
         }.getType();
         Type typeArray = new TypeToken<String[]>() {
@@ -209,6 +182,9 @@ public class afterLoginMainPage extends AppCompatActivity {
         gameData.setRankLOL(gson.fromJson(jsonLOL, typeArray));
         gameData.setRankR6(gson.fromJson(jsonR6, typeArray));
         gameData.setRankGTA(gson.fromJson(jsonGTA, typeArray));
+        */
+        gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
+
     }
-    
+
 }

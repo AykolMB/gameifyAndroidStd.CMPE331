@@ -39,7 +39,9 @@ public class addGame extends AppCompatActivity {
     String[] lollist = game_lol.getLol_ranks();
     String[] r6list = game_r6.getR6_ranks();
     String[] gtalist = game_gta.getGta5_rank();
-    Map<String, String> gameDataMap = new HashMap<String, String>();
+    private static String username;
+    private static String age;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,14 +64,15 @@ public class addGame extends AppCompatActivity {
         sp_R6.setEnabled(false);
         sp_GTA.setEnabled(false);
 
-        String username = getIntent().getStringExtra("usernameToAddGame");
-
-        int index = firstCheckUsername(username);
+        username = getIntent().getStringExtra("usernameToAddGame");
+        age = getIntent().getStringExtra("ageToAddGame");
 
         adapter(sp_CS, csgolist);
         adapter(sp_LOL, lollist);
         adapter(sp_R6, r6list);
         adapter(sp_GTA, gtalist);
+
+        loadGameData();
 
         // Checkbox and spinner
         {
@@ -135,7 +138,8 @@ public class addGame extends AppCompatActivity {
         but_update.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean status = checkUp(index);
+                int indexOfArraylist = allDataUsernameChecker(username);
+                boolean status = checkUp(indexOfArraylist);
                 if (status) {
                     saveGameData();
                     addGame.this.finish();
@@ -148,7 +152,8 @@ public class addGame extends AppCompatActivity {
         but_reset.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean statusClean = statusClean(index);
+                int indexOfArraylist = allDataUsernameChecker(username);
+                boolean statusClean = statusClean(indexOfArraylist);
                 if (statusClean) {
                     Toast.makeText(addGame.this, "Your game data is resetted..", Toast.LENGTH_SHORT).show();
                     saveGameData();
@@ -160,19 +165,38 @@ public class addGame extends AppCompatActivity {
         but_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                checkYesorNo(index);
+                int indexOfArraylist = allDataUsernameChecker(username);
+                checkYesorNo(indexOfArraylist);
             }
         });
 
 
     }
 
+    private int allDataUsernameChecker(String username) {
+        int a = 0;
+        ArrayList<gameData> temp = gameData.getAllUserData();
+        if (temp != null) {
+            for (int i = 0; i < temp.size(); i++) {
+                if (temp.get(i).getUsername().equalsIgnoreCase(username)) {
+                    a = i;
+                    break;
+                }
+            }
+        }
+        return a;
+    }
+
     private boolean checkUp(int index) {
         boolean status = true;
+        String getRankCSGO = gameData.getAllUserData().get(index).getrCsgo();
+        String getRankLOL = gameData.getAllUserData().get(index).getrLol();
+        String getRankR6 = gameData.getAllUserData().get(index).getrR6();
+        String getRankGTA = gameData.getAllUserData().get(index).getrGta();
+        gameData.getAllUserData().remove(index);
         if (cb_CS.isChecked()) {
             if (sp_CS.getSelectedItemPosition() != 0) {
-                String getRankCSGO = sp_CS.getSelectedItem().toString();
-                gameData.putItemArrayList("CS-GO", index, getRankCSGO);
+                getRankCSGO = sp_CS.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
@@ -180,8 +204,7 @@ public class addGame extends AppCompatActivity {
         }
         if (cb_LOL.isChecked()) {
             if (sp_LOL.getSelectedItemPosition() != 0) {
-                String getRankLOL = sp_LOL.getSelectedItem().toString();
-                gameData.putItemArrayList("LOL", index, getRankLOL);
+                getRankLOL = sp_LOL.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
@@ -189,8 +212,7 @@ public class addGame extends AppCompatActivity {
         }
         if (cb_R6.isChecked()) {
             if (sp_R6.getSelectedItemPosition() != 0) {
-                String getRankR6 = sp_R6.getSelectedItem().toString();
-                gameData.putItemArrayList("R6", index, getRankR6);
+                getRankR6 = sp_R6.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
@@ -198,18 +220,20 @@ public class addGame extends AppCompatActivity {
         }
         if (cb_GTA.isChecked()) {
             if (sp_GTA.getSelectedItemPosition() != 0) {
-                String getRankGTA = sp_GTA.getSelectedItem().toString();
-                gameData.putItemArrayList("GTA", index, getRankGTA);
+                getRankGTA = sp_GTA.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
             }
         }
+
+        gameData gd = new gameData(username, age, getRankCSGO, getRankLOL, getRankR6, getRankGTA);
+        gameData.getAllUserData().add(index, gd);
         return status;
     }
 
     private boolean statusClean(int index) {
-        gameData.clearRankData(index);
+        clearGameData(index);
         return true;
     }
 
@@ -241,63 +265,48 @@ public class addGame extends AppCompatActivity {
 
     private boolean check(int index) {
         boolean status = true;
+        String getRankCSGO = "";
+        String getRankLOL = "";
+        String getRankR6 = "";
+        String getRankGTA = "";
         if (cb_CS.isChecked()) {
             if (sp_CS.getSelectedItemPosition() != 0) {
-                String getRankCSGO = sp_CS.getSelectedItem().toString();
-                gameData.putItemArrayList("CS-GO", index, getRankCSGO);
+                getRankCSGO = sp_CS.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
             }
-        } else {
-            gameData.putItemArrayList("CS-GO", index, "");
         }
         if (cb_LOL.isChecked()) {
             if (sp_LOL.getSelectedItemPosition() != 0) {
-                String getRankLOL = sp_LOL.getSelectedItem().toString();
-                gameData.putItemArrayList("LOL", index, getRankLOL);
+                getRankLOL = sp_LOL.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
             }
-        } else {
-            gameData.putItemArrayList("LOL", index, "");
         }
         if (cb_R6.isChecked()) {
             if (sp_R6.getSelectedItemPosition() != 0) {
-                String getRankR6 = sp_R6.getSelectedItem().toString();
-                gameData.putItemArrayList("R6", index, getRankR6);
+                getRankR6 = sp_R6.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
             }
-        } else {
-            gameData.putItemArrayList("R6", index, "");
         }
         if (cb_GTA.isChecked()) {
             if (sp_GTA.getSelectedItemPosition() != 0) {
-                String getRankGTA = sp_GTA.getSelectedItem().toString();
-                gameData.putItemArrayList("GTA", index, getRankGTA);
+                getRankGTA = sp_GTA.getSelectedItem().toString();
                 status = true;
             } else {
                 status = false;
             }
-        } else {
-            gameData.putItemArrayList("GTA", index, "");
         }
+
+        gameData.getAllUserData().add(index,new gameData(username, age, getRankCSGO, getRankLOL, getRankR6, getRankGTA));
         return status;
+
     }
 
-    private int firstCheckUsername(String username) {
-        int index = 0;
-        ArrayList<String> temp = gameData.getUsernameArrayList();
-        for (int i = 0; i < temp.size(); i++) {
-            if (temp.get(i).equalsIgnoreCase(username)) {
-                index = i;
-            }
-        }
-        return index;
-    }
 
     private void adapter(Spinner sp, String[] templist) {
         ArrayAdapter aa = new ArrayAdapter(this, android.R.layout.simple_spinner_item, templist);
@@ -309,18 +318,23 @@ public class addGame extends AppCompatActivity {
         SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharepref.edit();
         Gson gson = new Gson();
+        String jsonAllUserData = gson.toJson(gameData.getAllUserData());
+        /*
         String jsonUsername = gson.toJson(gameData.getUsernameArrayList());
         String jsonGameList = gson.toJson(gameData.getGameList());
         String jsonCSGO = gson.toJson(gameData.getRankCSGO());
         String jsonLOL = gson.toJson(gameData.getRankLOL());
         String jsonR6 = gson.toJson(gameData.getRankR6());
         String jsonGTA = gson.toJson(gameData.getRankGTA());
+
         editor.putString("usernameArrayList", jsonUsername);
         editor.putString("gameList", jsonGameList);
         editor.putString("csgoRank", jsonCSGO);
         editor.putString("lolRank", jsonLOL);
         editor.putString("r6Rank", jsonR6);
         editor.putString("gtaRank", jsonGTA);
+        */
+        editor.putString("jsonAllUserData", jsonAllUserData);
         editor.apply();
 
     }
@@ -334,6 +348,10 @@ public class addGame extends AppCompatActivity {
         String jsonLOL = sharepref.getString("lolRank", null);
         String jsonR6 = sharepref.getString("r6Rank", null);
         String jsonGTA = sharepref.getString("gtaRank", null);
+        String jsonAllUserData = sharepref.getString("jsonAllUserData", null);
+        Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
+        }.getType();
+        /*
         Type typeArrayList = new TypeToken<ArrayList<String>>() {
         }.getType();
         Type typeArray = new TypeToken<String[]>() {
@@ -344,5 +362,19 @@ public class addGame extends AppCompatActivity {
         gameData.setRankLOL(gson.fromJson(jsonLOL, typeArray));
         gameData.setRankR6(gson.fromJson(jsonR6, typeArray));
         gameData.setRankGTA(gson.fromJson(jsonGTA, typeArray));
+        */
+        gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
+
+    }
+
+    private void clearGameData(int indexOfUser){
+        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharepref.edit();
+        Gson gson = new Gson();
+        ArrayList<gameData> temp = gameData.getAllUserData();
+        temp.remove(indexOfUser);
+        String jsonTemp = gson.toJson(temp);
+        editor.putString("jsonAllUserData", jsonTemp);
+        editor.apply();
     }
 }

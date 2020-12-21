@@ -105,7 +105,10 @@ public class createAccountWindow extends AppCompatActivity {
                     if (password.equalsIgnoreCase(re_password)){
                         userAccount new_user = new userAccount(name, surname, age, email, username, password, re_password);
                         userAccount.userAccountArrayList.add(new_user);
+                        gameData temp = new gameData(username, age, "", "", "", "");
+                        gameData.getAllUserData().add(temp);
                         saveData();
+                        saveGameData();
                         createAccountWindow.this.finish();
                     }else{
                         Toast.makeText(createAccountWindow.this, "Please check your passwords..", Toast.LENGTH_SHORT).show();
@@ -132,16 +135,30 @@ public class createAccountWindow extends AppCompatActivity {
 
     }
 
-    private void loadData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
+    private void saveGameData() {
+        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharepref.edit();
         Gson gson = new Gson();
-        String json = sharedPreferences.getString("userlist",null);
-        Type type = new TypeToken<ArrayList<userAccount>>() {}.getType();
-        userAccount.setUserAccountArrayList(gson.fromJson(json, type));
+        String jsonAllUserData = gson.toJson(gameData.getAllUserData());
+        /*
+        String jsonUsername = gson.toJson(gameData.getUsernameArrayList());
+        String jsonGameList = gson.toJson(gameData.getGameList());
+        String jsonCSGO = gson.toJson(gameData.getRankCSGO());
+        String jsonLOL = gson.toJson(gameData.getRankLOL());
+        String jsonR6 = gson.toJson(gameData.getRankR6());
+        String jsonGTA = gson.toJson(gameData.getRankGTA());
 
-        if (userAccount.getUserAccountArrayList() == null){
-            new userAccount();  // will create arraylist
-        }
+        editor.putString("usernameArrayList", jsonUsername);
+        editor.putString("gameList", jsonGameList);
+        editor.putString("csgoRank", jsonCSGO);
+        editor.putString("lolRank", jsonLOL);
+        editor.putString("r6Rank", jsonR6);
+        editor.putString("gtaRank", jsonGTA);
+        */
+        editor.putString("jsonAllUserData", jsonAllUserData);
+        editor.apply();
+
     }
+
 
 }

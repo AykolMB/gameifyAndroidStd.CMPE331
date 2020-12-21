@@ -51,6 +51,8 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent =  new Intent(MainActivity.this, com.example.gameify.afterLoginMainPage.class);
                 userAccount userAdmin = new userAccount("Admin","Admin","Admin","Admin","admin","123","123");
                 userAccount.userAccountArrayList.add(userAdmin);
+                gameData gd = new gameData("admin", "admin", "admin", "admin", "admin", "admin");
+                gameData.allUserData.add(0,gd);
                 int index = userAccount.getUserAccountArrayList().indexOf(userAdmin);
                 intent.putExtra("index",index);
                 saveData();
@@ -127,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
-        String json = gson.toJson(userAccount.getUserAccountArrayList());
         editor.remove("userlist");
         editor.apply();
 
@@ -144,6 +145,7 @@ public class MainActivity extends AppCompatActivity {
             new userAccount();  // will create arraylist
         }
     }
+
 
 
 }
