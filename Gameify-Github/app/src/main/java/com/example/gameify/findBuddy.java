@@ -21,7 +21,16 @@ public class findBuddy extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_find_buddy);
 
-        loadGameData();
+        loadData();
+
+        /*
+        Eğer hesabın diğer verilerine Ad soyad mail ulaşmak gerekirse
+        userAccount.getUserAccountArrayList().get(index).getName,getSurname,getMail? şeklinde erişilecek
+
+        Buradaki 34. satırdaki username'i for ile döndürüp o indexi bulmak lazım sonrasında index üstteki kodda kullanılacak
+
+        */
+
         String username = getIntent().getStringExtra("usernameToGameRank");
         int indexUsername = allDataUsernameChecker(username);
         tv_userName = (TextView) findViewById(R.id.tv_userName);
@@ -88,31 +97,15 @@ public class findBuddy extends AppCompatActivity {
         return a;
     }
 
-    private void loadGameData() {
-        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         Gson gson = new Gson();
-        String jsonUsername = sharepref.getString("usernameArrayList", null);
-        String jsonGameList = sharepref.getString("gameList", null);
-        String jsonCSGO = sharepref.getString("csgoRank", null);
-        String jsonLOL = sharepref.getString("lolRank", null);
-        String jsonR6 = sharepref.getString("r6Rank", null);
-        String jsonGTA = sharepref.getString("gtaRank", null);
-        String jsonAllUserData = sharepref.getString("jsonAllUserData", null);
+        String json = sharedPreferences.getString("userlist",null);
+        Type type = new TypeToken<ArrayList<userAccount>>() {}.getType();
+        userAccount.setUserAccountArrayList(gson.fromJson(json, type));
+        String jsonAllUserData = sharedPreferences.getString("jsonAllUserData", null);
         Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
         }.getType();
-        /*
-        Type typeArrayList = new TypeToken<ArrayList<String>>() {
-        }.getType();
-        Type typeArray = new TypeToken<String[]>() {
-        }.getType();
-        gameData.setUsernameArrayList(gson.fromJson(jsonUsername, typeArrayList));
-        gameData.setGameList(gson.fromJson(jsonGameList, typeArray));
-        gameData.setRankCSGO(gson.fromJson(jsonCSGO, typeArray));
-        gameData.setRankLOL(gson.fromJson(jsonLOL, typeArray));
-        gameData.setRankR6(gson.fromJson(jsonR6, typeArray));
-        gameData.setRankGTA(gson.fromJson(jsonGTA, typeArray));
-        */
         gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
-
     }
 }

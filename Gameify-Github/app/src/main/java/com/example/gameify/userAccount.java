@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class userAccount {
 
-    public static ArrayList<userAccount> userAccountArrayList;
+    public static ArrayList<userAccount> userAccountArrayList = new ArrayList<>();
     private String name;
     private String surname;
     private String age;
@@ -19,7 +19,6 @@ public class userAccount {
 
 
     public userAccount() {
-    userAccountArrayList = new ArrayList<>();
     }
 
     public userAccount(String name, String surname, String age, String email, String username, String password, String re_password) {

@@ -43,19 +43,23 @@ public class MainActivity extends AppCompatActivity {
         cb_robot = (CheckBox) findViewById(R.id.cb_robot);
         but_login_button = (Button) findViewById(R.id.but_login_button);
 
+
+        loadData();
+
         // Silinecek
         tv_username.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 loadData();
                 Intent intent =  new Intent(MainActivity.this, com.example.gameify.afterLoginMainPage.class);
-                userAccount userAdmin = new userAccount("Admin","Admin","Admin","Admin","admin","123","123");
-                userAccount.userAccountArrayList.add(userAdmin);
-                gameData gd = new gameData("admin", "admin", "admin", "admin", "admin", "admin");
-                gameData.allUserData.add(0,gd);
-                int index = userAccount.getUserAccountArrayList().indexOf(userAdmin);
+                int index = 0;
+                for (int i = 0 ; i<userAccount.getUserAccountArrayList().size() ; i++){
+                    if (userAccount.getUserAccountArrayList().get(i).getUsername().equalsIgnoreCase("admin")){
+                        index = i;
+                        break;
+                    }
+                }
                 intent.putExtra("index",index);
-                saveData();
                 startActivity(intent);
 
             }
@@ -65,6 +69,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 clearData();
+                firstMethodofAdmin();
+                saveData();
             }
         });
 
@@ -91,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
                         if (username_from_et.equalsIgnoreCase(userAccount.getUserAccountArrayList().get(i).getUsername())) {
                             if (password_from_et.equalsIgnoreCase(userAccount.getUserAccountArrayList().get(i).getPassword())) {
                                 index = i;
-                                String usernameList = userAccount.getUserAccountArrayList().get(index).getUsername();
-                                String passwordList = userAccount.getUserAccountArrayList().get(index).getPassword();
                                 if (cb_robot.isChecked()) {
                                     et_username.setText("");
                                     et_password.setText("");
@@ -104,15 +108,22 @@ public class MainActivity extends AppCompatActivity {
                                     Toast.makeText(MainActivity.this, "Please verify you're human!!", Toast.LENGTH_SHORT).show();
                                 }
                             } else {
-                                Toast.makeText(MainActivity.this, "Entered password is not matched username!!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(MainActivity.this, "Entered password is not matched with username's password!!", Toast.LENGTH_SHORT).show();
+                                et_password.setText("");
                             }
-                        } else {
-                            Toast.makeText(MainActivity.this, "Entered username is not matched any data!!", Toast.LENGTH_SHORT).show();
                         }
                     }
                 }
             }
         });
+    }
+
+    private void firstMethodofAdmin() {
+        userAccount userAdmin = new userAccount("Admin","Admin","Admin","Admin","admin","123","123");
+        userAccount.getUserAccountArrayList().add(userAdmin);
+        gameData gd = new gameData("admin", "admin", "admin", "admin", "admin", "admin");
+        gameData.getAllUserData().add(gd);
+        saveData();
     }
 
     private void saveData(){
@@ -121,6 +132,8 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = gson.toJson(userAccount.getUserAccountArrayList());
         editor.putString("userlist",json);
+        String jsonAllUserData = gson.toJson(gameData.getAllUserData());
+        editor.putString("jsonAllUserData", jsonAllUserData);
         editor.apply();
 
     }
@@ -128,8 +141,8 @@ public class MainActivity extends AppCompatActivity {
     private void clearData(){
         SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        Gson gson = new Gson();
         editor.remove("userlist");
+        editor.remove("jsonAllUserData");
         editor.apply();
 
     }
@@ -140,11 +153,12 @@ public class MainActivity extends AppCompatActivity {
         String json = sharedPreferences.getString("userlist",null);
         Type type = new TypeToken<ArrayList<userAccount>>() {}.getType();
         userAccount.setUserAccountArrayList(gson.fromJson(json, type));
-
-        if (userAccount.getUserAccountArrayList() == null){
-            new userAccount();  // will create arraylist
-        }
+        String jsonAllUserData = sharedPreferences.getString("jsonAllUserData", null);
+        Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
+        }.getType();
+        gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
     }
+
 
 
 

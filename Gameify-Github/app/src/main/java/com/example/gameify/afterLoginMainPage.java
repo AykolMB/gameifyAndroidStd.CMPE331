@@ -76,6 +76,7 @@ public class afterLoginMainPage extends AppCompatActivity {
         but_find.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                loadData();
                 Intent intent = new Intent(afterLoginMainPage.this, com.example.gameify.findBuddy.class);
                 intent.putExtra("usernameToGameRank", username_bf);
                 intent.putExtra("ageToGameRank", age_bf);
@@ -85,7 +86,7 @@ public class afterLoginMainPage extends AppCompatActivity {
         but_gamedata_button_afterLogPage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                loadGameData();
+                loadData();
                 Intent intent = new Intent(afterLoginMainPage.this , addGame.class);
                 intent.putExtra("usernameToAddGame", username_bf);
                 intent.putExtra("ageToAddGame", age_bf);
@@ -97,7 +98,6 @@ public class afterLoginMainPage extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 loadData();
-                loadGameData();
                 String out = "";
                 int index = allDataUsernameChecker(username_bf);
                 String csgoRank = gameData.getAllUserData().get(index).getrCsgo();
@@ -139,10 +139,10 @@ public class afterLoginMainPage extends AppCompatActivity {
         String json = sharedPreferences.getString("userlist",null);
         Type type = new TypeToken<ArrayList<userAccount>>() {}.getType();
         userAccount.setUserAccountArrayList(gson.fromJson(json, type));
-
-        if (userAccount.getUserAccountArrayList() == null){
-            new userAccount();  // will create arraylist
-        }
+        String jsonAllUserData = sharedPreferences.getString("jsonAllUserData", null);
+        Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
+        }.getType();
+        gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
     }
 
     private int allDataUsernameChecker(String username) {
@@ -159,32 +159,5 @@ public class afterLoginMainPage extends AppCompatActivity {
         return a;
     }
 
-    private void loadGameData() {
-        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
-        Gson gson = new Gson();
-        String jsonUsername = sharepref.getString("usernameArrayList", null);
-        String jsonGameList = sharepref.getString("gameList", null);
-        String jsonCSGO = sharepref.getString("csgoRank", null);
-        String jsonLOL = sharepref.getString("lolRank", null);
-        String jsonR6 = sharepref.getString("r6Rank", null);
-        String jsonGTA = sharepref.getString("gtaRank", null);
-        String jsonAllUserData = sharepref.getString("jsonAllUserData", null);
-        Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
-        }.getType();
-        /*
-        Type typeArrayList = new TypeToken<ArrayList<String>>() {
-        }.getType();
-        Type typeArray = new TypeToken<String[]>() {
-        }.getType();
-        gameData.setUsernameArrayList(gson.fromJson(jsonUsername, typeArrayList));
-        gameData.setGameList(gson.fromJson(jsonGameList, typeArray));
-        gameData.setRankCSGO(gson.fromJson(jsonCSGO, typeArray));
-        gameData.setRankLOL(gson.fromJson(jsonLOL, typeArray));
-        gameData.setRankR6(gson.fromJson(jsonR6, typeArray));
-        gameData.setRankGTA(gson.fromJson(jsonGTA, typeArray));
-        */
-        gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
-
-    }
 
 }

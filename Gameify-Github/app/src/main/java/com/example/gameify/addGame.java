@@ -72,7 +72,7 @@ public class addGame extends AppCompatActivity {
         adapter(sp_R6, r6list);
         adapter(sp_GTA, gtalist);
 
-        loadGameData();
+        loadData();
 
         // Checkbox and spinner
         {
@@ -141,7 +141,7 @@ public class addGame extends AppCompatActivity {
                 int indexOfArraylist = allDataUsernameChecker(username);
                 boolean status = checkUp(indexOfArraylist);
                 if (status) {
-                    saveGameData();
+                    saveData();
                     addGame.this.finish();
                 } else {
                     Toast.makeText(addGame.this, "Please choose your rank/level for selected games..", Toast.LENGTH_SHORT).show();
@@ -156,7 +156,7 @@ public class addGame extends AppCompatActivity {
                 boolean statusClean = statusClean(indexOfArraylist);
                 if (statusClean) {
                     Toast.makeText(addGame.this, "Your game data is resetted..", Toast.LENGTH_SHORT).show();
-                    saveGameData();
+                    saveData();
                     addGame.this.finish();
                 }
             }
@@ -245,7 +245,7 @@ public class addGame extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         boolean status = check(index);
                         if (status) {
-                            saveGameData();
+                            saveData();
                             addGame.this.finish();
                         } else {
                             Toast.makeText(addGame.this, "Please choose your rank/level for selected games..", Toast.LENGTH_SHORT).show();
@@ -314,62 +314,33 @@ public class addGame extends AppCompatActivity {
         sp.setAdapter(aa);
     }
 
-    private void saveGameData() {
-        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharepref.edit();
+    private void saveData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
+        String json = gson.toJson(userAccount.getUserAccountArrayList());
+        editor.putString("userlist",json);
         String jsonAllUserData = gson.toJson(gameData.getAllUserData());
-        /*
-        String jsonUsername = gson.toJson(gameData.getUsernameArrayList());
-        String jsonGameList = gson.toJson(gameData.getGameList());
-        String jsonCSGO = gson.toJson(gameData.getRankCSGO());
-        String jsonLOL = gson.toJson(gameData.getRankLOL());
-        String jsonR6 = gson.toJson(gameData.getRankR6());
-        String jsonGTA = gson.toJson(gameData.getRankGTA());
-
-        editor.putString("usernameArrayList", jsonUsername);
-        editor.putString("gameList", jsonGameList);
-        editor.putString("csgoRank", jsonCSGO);
-        editor.putString("lolRank", jsonLOL);
-        editor.putString("r6Rank", jsonR6);
-        editor.putString("gtaRank", jsonGTA);
-        */
         editor.putString("jsonAllUserData", jsonAllUserData);
         editor.apply();
 
     }
 
-    private void loadGameData() {
-        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
+    private void loadData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
         Gson gson = new Gson();
-        String jsonUsername = sharepref.getString("usernameArrayList", null);
-        String jsonGameList = sharepref.getString("gameList", null);
-        String jsonCSGO = sharepref.getString("csgoRank", null);
-        String jsonLOL = sharepref.getString("lolRank", null);
-        String jsonR6 = sharepref.getString("r6Rank", null);
-        String jsonGTA = sharepref.getString("gtaRank", null);
-        String jsonAllUserData = sharepref.getString("jsonAllUserData", null);
+        String json = sharedPreferences.getString("userlist",null);
+        Type type = new TypeToken<ArrayList<userAccount>>() {}.getType();
+        userAccount.setUserAccountArrayList(gson.fromJson(json, type));
+        String jsonAllUserData = sharedPreferences.getString("jsonAllUserData", null);
         Type typeSpecial = new TypeToken<ArrayList<gameData>>() {
         }.getType();
-        /*
-        Type typeArrayList = new TypeToken<ArrayList<String>>() {
-        }.getType();
-        Type typeArray = new TypeToken<String[]>() {
-        }.getType();
-        gameData.setUsernameArrayList(gson.fromJson(jsonUsername, typeArrayList));
-        gameData.setGameList(gson.fromJson(jsonGameList, typeArray));
-        gameData.setRankCSGO(gson.fromJson(jsonCSGO, typeArray));
-        gameData.setRankLOL(gson.fromJson(jsonLOL, typeArray));
-        gameData.setRankR6(gson.fromJson(jsonR6, typeArray));
-        gameData.setRankGTA(gson.fromJson(jsonGTA, typeArray));
-        */
         gameData.setAllUserData(gson.fromJson(jsonAllUserData, typeSpecial));
-
     }
 
     private void clearGameData(int indexOfUser){
-        SharedPreferences sharepref = getSharedPreferences("sharepref", MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharepref.edit();
+        SharedPreferences sharedPreferences = getSharedPreferences("shared_preferences", MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
         Gson gson = new Gson();
         ArrayList<gameData> temp = gameData.getAllUserData();
         temp.remove(indexOfUser);
